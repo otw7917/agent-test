@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState } from "react";
 
 type CarouselProps = {
@@ -24,11 +26,11 @@ export default function Carousel({ children, className }: CarouselProps) {
       style={{ backgroundColor: color }}
     >
       <div
-        className="whitespace-nowrap transition-transform"
+        className='whitespace-nowrap transition-transform'
         style={{ transform: `translateX(-${index * 100}%)` }}
       >
         {children.map((child, i) => (
-          <div key={i} className="inline-block w-full align-top">
+          <div key={i} className='inline-block w-full align-top'>
             {child}
           </div>
         ))}
@@ -36,16 +38,16 @@ export default function Carousel({ children, className }: CarouselProps) {
       {children.length > 1 && (
         <>
           <button
-            aria-label="Previous"
+            aria-label='Previous'
             onClick={prev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 p-2"
+            className='absolute left-0 top-1/2 -translate-y-1/2 p-2'
           >
             ‹
           </button>
           <button
-            aria-label="Next"
+            aria-label='Next'
             onClick={next}
-            className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
+            className='absolute right-0 top-1/2 -translate-y-1/2 p-2'
           >
             ›
           </button>
