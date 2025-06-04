@@ -8,7 +8,17 @@ type CarouselProps = {
 };
 
 export default function Carousel({ children, className }: CarouselProps) {
-  const [index, setIndex] = useState(0);
+  const slides = useMemo(() => {
+    if (children.length > 1) {
+      const first = children[0];
+      const last = children[children.length - 1];
+      return [last, ...children, first];
+    }
+    return children;
+  }, [children]);
+
+  const [index, setIndex] = useState(children.length > 1 ? 2 : 0);
+  const [animating, setAnimating] = useState(false);
 
   const color = useMemo(() => {
     const h = Math.floor(Math.random() * 360);
@@ -17,8 +27,30 @@ export default function Carousel({ children, className }: CarouselProps) {
     return `hsl(${h} ${s}% ${l}%)`;
   }, []);
 
-  const prev = () => setIndex((i) => (i === 0 ? children.length - 1 : i - 1));
-  const next = () => setIndex((i) => (i === children.length - 1 ? 0 : i + 1));
+  const prev = () => {
+    if (children.length > 1) {
+      setAnimating(true);
+      setIndex((i) => i - 1);
+    }
+  };
+  const next = () => {
+    if (children.length > 1) {
+      setAnimating(true);
+      setIndex((i) => i + 1);
+    }
+  };
+
+  const handleTransitionEnd = () => {
+    if (index === 0) {
+      setAnimating(false);
+      setIndex(slides.length - 2);
+    } else if (index === slides.length - 1) {
+      setAnimating(false);
+      setIndex(1);
+    } else {
+      setAnimating(false);
+    }
+  };
 
   return (
     <div
@@ -26,11 +58,15 @@ export default function Carousel({ children, className }: CarouselProps) {
       style={{ backgroundColor: color }}
     >
       <div
-        className='whitespace-nowrap transition-transform'
-        style={{ transform: `translateX(-${index * 100}%)` }}
+        className='flex'
+        style={{
+          transform: `translateX(-${index * 100}%)`,
+          transition: animating ? "transform 0.3s" : "none",
+        }}
+        onTransitionEnd={handleTransitionEnd}
       >
-        {children.map((child, i) => (
-          <div key={i} className='inline-block w-full align-top'>
+        {slides.map((child, i) => (
+          <div key={i} className='flex-shrink-0 w-[80%] mx-[10%]'>
             {child}
           </div>
         ))}
